@@ -1,0 +1,18 @@
+#detach volume from the instances
+---
+- hosts: localhost
+  become: yes
+  tasks:
+  - name: get the instance IP
+    ec2_instance_facts:
+      filters:
+        "tag:Name": Golden
+    register: ec2info
+  - name: Display ec2info
+    debug: var="ec2info.instances[0].block_device_mappings[0].ebs.volume_id"
+  - name: Detach the EC2 volume
+    ec2_vol:
+      instance: "{{ ec2info.instances[0].instance_id }}"
+      id: "{{ ec2info.instances[0].block_device_mappings[0].ebs.volume_id }}"
+      region: us-east-1
+      instance: None
