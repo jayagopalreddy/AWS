@@ -1,0 +1,19 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+  - name: Search ec2
+    ec2_remote_facts:
+      filters:
+        "tag:Name": "Golden-bastion"
+      region: us-east-1
+    register: ec2info
+  - name: take ami of the instance
+    ec2_ami:
+      instance_id: "{{ec2info.instances[0].id}}"
+      no_reboot: yes
+      wait: yes
+      name: Golden
+      tags:
+        Name: Golden
+        ansible: True
