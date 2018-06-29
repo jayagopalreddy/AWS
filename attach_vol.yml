@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+  - name: get the instance details
+    ec2_instance_facts:
+      filters:
+        "tag:Name": Golden
+    register: ec2info
+  - name: get the volume details
+    ec2_vol_facts:
+       region: us-east-1
+       filters:
+        "tag:Name": Golden
+    register: volinfo
+  - name: attach volume to the instance
+    ec2_vol:
+      instance: "{{ ec2info.instances[0].instance_id }}"
+      id: "{{ volinfo.volumes[0].id }}" 
+      region: us-east-1
+      device_name: /dev/sda1
+      delete_on_termination: yes
