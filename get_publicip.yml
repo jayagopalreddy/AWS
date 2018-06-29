@@ -1,0 +1,11 @@
+---
+- hosts: localhost
+  become: yes
+  tasks:
+  - name: get the instance IP
+    ec2_instance_facts:
+      filters:
+        "tag:Name": Golden
+    register: ec2info
+  - name: Display ec2info
+    debug: var="ec2info.instances[0].public_ip_address"
