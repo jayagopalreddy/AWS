@@ -1,0 +1,21 @@
+#create volume form from the snapshot
+---
+- hosts: localhost
+  become: yes
+  tasks:
+  - name: get new snapshot ID
+    ec2_snapshot_facts:
+      filters:
+        "tag:Name": Golden_snap
+    register: snapinfo
+  - name: create volume from snapshot
+    ec2_vol:
+      snapshot: "{{ snapinfo.snapshots[0].snapshot_id }}"
+      zone: us-east-1c
+      region: us-east-1
+      volume_size: 10
+      volume_type: gp2
+      tags:
+        Name: Golden
+        ansible: True
+    register: newebsvolume
