@@ -4,6 +4,7 @@
   tasks:
   - name: get the instance IP
     ec2_instance_facts:
+      region: us-west-2
       filters:
         "tag:Name": Golden
     register: ec2info
